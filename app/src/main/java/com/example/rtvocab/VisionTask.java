@@ -49,6 +49,7 @@ public class VisionTask extends AsyncTask<String, Integer, String> {
     public VisionTask (Context _context, AnalysisCompleted _ac) {
         this.analysisCompleted = _ac;
         this.contextRef = new WeakReference<>(_context);
+        //TODO initialize image from function
     }
 
     @Override
@@ -63,8 +64,9 @@ public class VisionTask extends AsyncTask<String, Integer, String> {
 
         // Create an authenticated Computer Vision client.
         ComputerVisionClient compVisClient = Authenticate(subscriptionKey, endpoint);
-        tags = AnalyzeLocalImage(compVisClient);
+        tags = AnalyzeLocalImage(compVisClient); //TODO pass image
         ReadFromFile(compVisClient);
+
 
         return null;
     }
