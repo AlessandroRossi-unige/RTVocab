@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -60,7 +61,11 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
 
                 String imgPath = et_datainput.getText().toString();
-                visionTask.execute(imgPath);
+                if(Build.VERSION.SDK_INT >= 11/*HONEYCOMB*/) {
+                    visionTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                } else {
+                    visionTask.execute();
+                }
             }
         });
     }

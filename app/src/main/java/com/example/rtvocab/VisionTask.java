@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,9 +24,13 @@ import com.microsoft.azure.cognitiveservices.vision.computervision.models.ImageA
 import com.microsoft.azure.cognitiveservices.vision.computervision.models.ImageTag;
 import com.microsoft.azure.cognitiveservices.vision.computervision.models.VisualFeatureTypes;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,11 +109,22 @@ public class VisionTask extends AsyncTask<String, Integer, String> {
         // <snippet_analyzelocal_analyze>
         try {
             // Need a byte array for analyzing a local image.
-            File rawImage = new File(pathToLocalImage);
-            byte[] imageByteArray = Files.readAllBytes(rawImage.toPath());
+            File imagefile = new File(pathToLocalImage);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(imagefile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            Bitmap bm = BitmapFactory.decodeStream(fis);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 100 , baos);
+            byte[] b = baos.toByteArray();
+//            byte[] imageByteArray = Files.readAllBytes(Paths.get(pathToLocalImage));
 
             // Call the Computer Vision service and tell it to analyze the loaded image.
-            ImageAnalysis analysis = compVisClient.computerVision().analyzeImageInStream().withImage(imageByteArray)
+            ImageAnalysis analysis = compVisClient.computerVision().analyzeImageInStream().withImage(b)
                     .withVisualFeatures(featuresToExtractFromLocalImage).execute();
 
             // </snippet_analyzelocal_analyze>
