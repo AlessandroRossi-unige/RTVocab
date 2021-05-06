@@ -1,9 +1,12 @@
 package com.example.rtvocab;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -21,8 +24,10 @@ import java.util.*;
 import com.google.gson.*;
 import com.squareup.okhttp.*;
 
+import static java.nio.file.Files.createDirectory;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements AnalysisCompleted {
 
     Button btn_getAnalysis = null;
     Button btn_Translate = null;
@@ -30,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rv_TranslateResults = null;
     EditText et_datainput = null;
     EditText et_Translate = null;
+
+    VisionTask visionTask = null;
+    AnalysisCompleted analysisCompleted = null;
 
 
     @Override
@@ -43,5 +51,29 @@ public class MainActivity extends AppCompatActivity {
         et_Translate = findViewById(R.id.et_Translate);
         rv_AnalysisResults = findViewById(R.id.rv_AnalysisResults);
         rv_TranslateResults = findViewById(R.id.rv_TranslateResults);
+
+        btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                visionTask = new VisionTask(MainActivity.this ,analysisCompleted);
+
+
+                String imgPath = et_datainput.getText().toString();
+                visionTask.execute(imgPath);
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onAnalysisCompleted(List<ImageTag> tags){
+        List<String> results = null;
+        for (ImageTag tag : tags) {
+            results.add(tag.name()+ " with " + tag.confidence());
+        }
+        String result = String.join(", ", results);
+        et_datainput.setText(result);
+
     }
 }
