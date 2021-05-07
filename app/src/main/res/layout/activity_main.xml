@@ -40,8 +40,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_AnalysisResults"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="232dp"
+        android:layout_height="194dp"
         app:layout_constraintBottom_toTopOf="@+id/rv_TranslateResults"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,8 +60,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_TranslateResults"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="226dp"
+        android:layout_height="194dp"
         app:layout_constraintBottom_toTopOf="@+id/et_Translate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
