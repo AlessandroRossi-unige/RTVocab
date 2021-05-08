@@ -14,13 +14,7 @@ import android.os.Debug;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
 
 import com.microsoft.azure.cognitiveservices.vision.computervision.*;
 import com.microsoft.azure.cognitiveservices.vision.computervision.implementation.ComputerVisionImpl;
@@ -70,8 +64,8 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
     private String AnalyzeLocalImage(ComputerVisionClient compVisClient, byte[] imageByte) {
         // This list defines the features to be extracted from the image.
         List<VisualFeatureTypes> featuresToExtractFromLocalImage = new ArrayList<>();
-        featuresToExtractFromLocalImage.add(VisualFeatureTypes.CATEGORIES);
         featuresToExtractFromLocalImage.add(VisualFeatureTypes.TAGS);
+
 
         try {
             // Call the Computer Vision service and tell it to analyze the loaded image.
@@ -99,7 +93,13 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        if (result.equals("OK")) MainActivity.et_datainput.setText(this.tagList.get(0).first);
+        String res = "";
+        if (result.equals("OK")) {
+            for (Pair<String, Double> tag : this.tagList) {
+                res += tag.first + ",";
+            }
+            MainActivity.et_datainput.setText(res);
+        }
         else MainActivity.et_datainput.setText(result);
     }
 
