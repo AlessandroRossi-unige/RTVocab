@@ -99,8 +99,8 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        System.out.println(this.tagList.get(0).first);
-        MainActivity.et_datainput.setText(this.tagList.get(0).first);
+        if (result.equals("OK")) MainActivity.et_datainput.setText(this.tagList.get(0).first);
+        else MainActivity.et_datainput.setText(result);
     }
 
     //---------------------------------------------//
