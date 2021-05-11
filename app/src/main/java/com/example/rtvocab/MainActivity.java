@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static RecyclerView rv_AnalysisResults = null;
     RecyclerView rv_TranslateResults = null;
     public static EditText et_datainput = null;
-    EditText et_Translate = null;
+    public static EditText et_Translate = null;
 
     VisionTask visionTask = null;
     AnalysisCompleted analysisCompleted = null;
@@ -73,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_Translate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] inputText = {"ciao","it","en"};
+                new TranslateTask().execute(inputText);
+            }
+        });
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
