@@ -70,7 +70,7 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Bitmap _image = BitmapFactory.decodeFile(s);
-        MainActivity.et_Translate.setText(s);
+
     }
 
 }

@@ -28,6 +28,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_getAnalysis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:alpha="0.5"

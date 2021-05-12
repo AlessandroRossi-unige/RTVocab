@@ -2,6 +2,8 @@ package com.example.rtvocab;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
@@ -18,6 +20,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.microsoft.azure.cognitiveservices.vision.computervision.*;
 import com.microsoft.azure.cognitiveservices.vision.computervision.implementation.ComputerVisionImpl;
@@ -36,19 +39,20 @@ import com.squareup.okhttp.*;
 import static java.nio.file.Files.createDirectory;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AnalysisCompleted{
 
     Button btn_getAnalysis = null;
-    Button btn_Translate = null;
-    public static RecyclerView rv_AnalysisResults = null;
-    RecyclerView rv_TranslateResults = null;
-    public static EditText et_datainput = null;
-    public static EditText et_Translate = null;
+    RecyclerView rv_getAnalysis = null;
+    ImageView iv_Image = null;
 
     VisionTask visionTask = null;
     AnalysisCompleted analysisCompleted = null;
 
     private final static int PICK_IMAGE = 1;
+
+    ArrayList <Item> itemList = new ArrayList<Item>();
+
+    ItemArrayAdapter itemArrayAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btn_getAnalysis = findViewById(R.id.btn_getAnalysis);
-        btn_Translate = findViewById(R.id.btn_Translate);
-        et_datainput = findViewById(R.id.et_dataInput);
-        et_Translate = findViewById(R.id.et_Translate);
-        rv_AnalysisResults = findViewById(R.id.rv_AnalysisResults);
-        rv_TranslateResults = findViewById(R.id.rv_TranslateResults);
+        rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
+        iv_Image = findViewById(R.id.iv_Image);
 
+        // Initializing list view with the custom adapter
+        itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList);
+        rv_getAnalysis = (RecyclerView) findViewById(R.id.rv_getAnalysis);
+        rv_getAnalysis.setLayoutManager(new LinearLayoutManager(this));
+        rv_getAnalysis.setItemAnimator(new DefaultItemAnimator());
+        rv_getAnalysis.setAdapter(itemArrayAdapter);
 
         btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_Translate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] inputText = {"ciao","it","en"};
-                new TranslateTask().execute(inputText);
-            }
-        });
+//        btn_Translate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String[] inputText = {"ciao","it","en"};
+//                new TranslateTask().execute(inputText);
+//            }
+//        });
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
@@ -132,16 +139,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+*/
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onAnalysisCompleted(List<ImageTag> tags){
-        List<String> results = null;
-        for (ImageTag tag : tags) {
-            results.add(tag.name()+ " with " + tag.confidence());
-        }
-        String result = String.join(", ", results);
-        et_datainput.setText(result);
+    public void onAnalysisCompleted(List<String> tags){
 
-    }*/
+        for (String tag:tags) {
+
+        }
+    }
 }

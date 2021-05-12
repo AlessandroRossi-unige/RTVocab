@@ -54,6 +54,7 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
     private static String subscriptionKey = "f9779642e5364a89af2473de6a73b49d";
     private static String endpoint = "https://unige-vision.cognitiveservices.azure.com/";
     private List<Pair<String, Double>> tagList;
+    private AnalysisCompleted analysisCompleted = null;
 
     //---------------------------------------------//
 
@@ -93,14 +94,14 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        String res = "";
+        List<String> res = null;
         if (result.equals("OK")) {
             for (Pair<String, Double> tag : this.tagList) {
-                res += tag.first + ",";
+                res.add(tag.first);
             }
-            MainActivity.et_datainput.setText(res);
         }
-        else MainActivity.et_datainput.setText(result);
+        this.analysisCompleted.onAnalysisCompleted(res);
+
     }
 
     //---------------------------------------------//

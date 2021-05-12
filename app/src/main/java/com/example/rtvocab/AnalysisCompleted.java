@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface AnalysisCompleted {
 
-    public void onAnalysisCompleted(List<ImageTag> tags);
+    public void onAnalysisCompleted(List<String> tags);
 
 }
