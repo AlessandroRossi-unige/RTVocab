@@ -44,6 +44,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         item.setText(itemList.get(listPosition).getName());
     }
 
+    public void updateData(ArrayList<Item> data) {
+        itemList.clear();
+        itemList = data;
+        notifyDataSetChanged();
+    }
+
     // Static inner class to initialize the views of rows
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView item;

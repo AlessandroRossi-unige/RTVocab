@@ -5,54 +5,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.Intent;
-import android.provider.MediaStore;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-
-import com.microsoft.azure.cognitiveservices.vision.computervision.*;
-import com.microsoft.azure.cognitiveservices.vision.computervision.implementation.ComputerVisionImpl;
-import com.microsoft.azure.cognitiveservices.vision.computervision.models.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import com.google.gson.*;
-import com.squareup.okhttp.*;
-
-import static java.nio.file.Files.createDirectory;
 
 
-public class MainActivity extends AppCompatActivity implements AnalysisCompleted{
+public class MainActivity extends AppCompatActivity implements AnalysisCompleted {
 
-    Button btn_getAnalysis = null;
-    RecyclerView rv_getAnalysis = null;
-    ImageView iv_Image = null;
+    private Button btn_getAnalysis = null;
+    private RecyclerView rv_getAnalysis = null;
+    private ImageView iv_Image = null;
 
-    VisionTask visionTask = null;
-    AnalysisCompleted analysisCompleted = null;
+    private VisionTask visionTask = null;
+    private AnalysisCompleted analysisCompleted = null;
 
     private final static int PICK_IMAGE = 1;
 
-    ArrayList <Item> itemList = new ArrayList<Item>();
+    private List<String> tagsList;
+    private ArrayList <Item> itemList = new ArrayList<Item>();
 
-    ItemArrayAdapter itemArrayAdapter = null;
+    private ItemArrayAdapter itemArrayAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +59,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
             }
         });
-
-//        btn_Translate.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String[] inputText = {"ciao","it","en"};
-//                new TranslateTask().execute(inputText);
-//            }
-//        });
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {
@@ -110,10 +82,11 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             InputStream iStream = null;
+            iv_Image.setImageURI(imageUri);
             try {
                 iStream = getContentResolver().openInputStream(imageUri);
                 byte[] inputData = this.getBytes(iStream);
-                new VisionTask().execute(inputData);
+                new VisionTask(this).execute(inputData);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -122,30 +95,23 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
         }
     }
-        /*
-        btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                visionTask = new VisionTask(MainActivity.this ,analysisCompleted);
-
-
-                String imgPath = et_datainput.getText().toString();
-                if(Build.VERSION.SDK_INT >= 11) {
-                    visionTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                } else {
-                    visionTask.execute();
-                }
-            }
-        });
-    }
-*/
     @RequiresApi(api = Build.VERSION_CODES.O)
+
     @Override
     public void onAnalysisCompleted(List<String> tags){
+        tags.add(0, "it");
+        tags.add(1, "fr");
+        String[] input = new String[tags.size()];
+        tags.toArray(input);
+        new TranslateTask(this).execute(input);
+    }
 
-        for (String tag:tags) {
-
+    @Override
+    public void onTranslateCompleted(List<Pair<String,String>> results) {
+        ArrayList<Item> input = new ArrayList<>();
+        for (Pair<String,String> el:results) {
+            input.add(new Item(el.first + "-" + el.second));
         }
+        itemArrayAdapter.updateData(input);
     }
 }

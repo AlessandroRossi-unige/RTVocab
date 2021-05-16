@@ -1,13 +1,9 @@
 package com.example.rtvocab;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-
+import android.util.Pair;
 import com.squareup.okhttp.HttpUrl;
-
 import java.io.IOException;
-
 import java.util.*;
 import com.google.gson.*;
 import com.squareup.okhttp.*;
@@ -15,8 +11,16 @@ import com.squareup.okhttp.*;
 
 public class TranslateTask extends AsyncTask<String, Integer, String> {
 
-    private static String subscriptionKey = "0b6d9f97b32f4d8c84d31db0c9473340";
-    private static String location ="westeurope";
+    private static final String subscriptionKey = "0b6d9f97b32f4d8c84d31db0c9473340";
+    private static final String location ="westeurope";
+
+    private List<Pair<String,String>> result;
+
+    private final AnalysisCompleted delegate;
+
+    public TranslateTask(AnalysisCompleted delegate) {
+        this.delegate = delegate;
+    }
 
     // Instantiates the OkHttpClient.
     OkHttpClient client = new OkHttpClient();
@@ -46,20 +50,35 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected String doInBackground(String... text) {
-        // text[0] -> text
-        // text[1] -> text language
-        // text[2] -> translate language
+        // text[0] -> user language
+        // text[1] -> translate language
+        // text[2..6] -> text
         if (text.length < 3) return "ERROR";
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("https")
                 .host("api.cognitive.microsofttranslator.com")
                 .addPathSegment("/translate")
                 .addQueryParameter("api-version", "3.0")
-                .addQueryParameter("from", text[1])
-                .addQueryParameter("to", text[2])
+                .addQueryParameter("from", "en")
+                .addQueryParameter("to", text[0])
+                .addQueryParameter("to", text[1])
                 .build();
         try {
-            return Post(text[0], url);
+            this.result = new ArrayList<Pair<String,String>>();
+            JsonParser parser = new JsonParser();
+            for (int i = 2; i < 7; i++) {
+                // API call
+                String res = Post(text[i], url);
+                // json parse
+                Object json = parser.parse(res);
+                JsonObject jsonObj = (JsonObject)((JsonArray)json).get(0);
+                JsonArray translations = (JsonArray) jsonObj.get("translations");
+                String first = ((JsonObject)translations.get(0)).get("text").toString().replace("\"","");
+                String second = ((JsonObject)translations.get(1)).get("text").toString().replace("\"","");
+                // add res
+                this.result.add(new Pair<>(first,second));
+            }
+            return "OK";
         } catch (Exception e) {
             System.out.println(e);
             return "ERROR";
@@ -69,8 +88,9 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Bitmap _image = BitmapFactory.decodeFile(s);
-
+        if (s.equals("OK")) {
+            delegate.onTranslateCompleted(this.result);
+        }
     }
 
 }
