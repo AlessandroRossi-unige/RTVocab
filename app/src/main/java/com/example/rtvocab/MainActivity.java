@@ -9,10 +9,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +86,12 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             InputStream iStream = null;
-            iv_Image.setImageURI(imageUri);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+            Picasso.get().load(imageUri).resize(width,height).into(iv_Image);
+
             try {
                 iStream = getContentResolver().openInputStream(imageUri);
                 byte[] inputData = this.getBytes(iStream);
