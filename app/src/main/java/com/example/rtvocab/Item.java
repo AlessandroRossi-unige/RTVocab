@@ -2,16 +2,24 @@ package com.example.rtvocab;
 
 public class Item {
 
-    private String name;
+    private String first;
+    private String second;
 
-    public Item(String n) {
-        name = n;
+    public Item(String f, String s) {
+        first = f;
+        second = s;
     }
-    public String getName() {
-        return name;
+    public String getFirst() {
+        return first;
+    }
+    public String getSecond() {
+        return second;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirst(String f) {
+        this.first = f;
     }
+    public void setSecond(String s) { this.second = s; }
+
+
 }

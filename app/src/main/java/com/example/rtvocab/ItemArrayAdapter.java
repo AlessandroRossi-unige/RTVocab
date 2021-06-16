@@ -1,6 +1,7 @@
 
 package com.example.rtvocab;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,16 @@ import java.util.ArrayList;
 
 public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.ViewHolder> {
 
+    private static AnalysisCompleted delegate = null;
+
     //All methods in this adapter are required for a bare minimum recyclerview adapter
     private int listItemLayout;
     private ArrayList<Item> itemList;
     // Constructor of the class
-    public ItemArrayAdapter(int layoutId, ArrayList<Item> itemList) {
+    public ItemArrayAdapter(int layoutId, ArrayList<Item> itemList, AnalysisCompleted delegate) {
         listItemLayout = layoutId;
         this.itemList = itemList;
+        this.delegate = delegate;
     }
 
     // get the size of the list
@@ -28,6 +32,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         return itemList == null ? 0 : itemList.size();
     }
 
+    public Item getItem(int pos) {
+        return itemList.get(pos);
+    }
 
     // specify the row layout file and click for each row
     @Override
@@ -41,7 +48,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
         TextView item = holder.item;
-        item.setText(itemList.get(listPosition).getName());
+        item.setText(itemList.get(listPosition).getFirst() + " -> " + itemList.get(listPosition).getSecond());
+    }
+    public void clearData() {
+        itemList.clear();
+        notifyDataSetChanged();
     }
 
     public void updateData(ArrayList<Item> data) {
@@ -60,7 +71,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         }
         @Override
         public void onClick(View view) {
-            Log.d("onclick", "onClick " + getLayoutPosition() + " " + item.getText());
+            delegate.onSelectCompleted(getLayoutPosition());
         }
     }
 }
