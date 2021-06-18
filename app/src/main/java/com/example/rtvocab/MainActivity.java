@@ -15,23 +15,32 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements AnalysisCompleted {
+public class MainActivity extends AppCompatActivity implements AnalysisCompleted, AdapterView.OnItemSelectedListener {
 
     private Button btn_getAnalysis = null;
     private RecyclerView rv_getAnalysis = null;
     private ImageView iv_Image = null;
     private TextView selectedTextView = null;
+    private Spinner spinnerFrom = null;
+    private Spinner spinnerTo = null;
+    private String lanFrom = "en";
+    private String lanTo = "it";
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
     Uri photoUri = null;
@@ -55,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
         iv_Image = findViewById(R.id.iv_Image);
         selectedTextView = findViewById(R.id.selectedTextView);
+        spinnerFrom = findViewById(R.id.spinnerFrom);
+        spinnerFrom.setOnItemSelectedListener(this);
+        spinnerTo = findViewById(R.id.spinnerTo);
+        spinnerTo.setOnItemSelectedListener(this);
 
         selectedTextView.setText("Press Analyze to take a picture");
 
@@ -64,6 +77,14 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         rv_getAnalysis.setLayoutManager(new LinearLayoutManager(this));
         rv_getAnalysis.setItemAnimator(new DefaultItemAnimator());
         rv_getAnalysis.setAdapter(itemArrayAdapter);
+
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.languages_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerFrom.setAdapter(spinnerAdapter);
+        spinnerTo.setAdapter(spinnerAdapter);
 
         btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +154,8 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
     @Override
     public void onAnalysisCompleted(List<String> tags){
-        tags.add(0, "it");
-        tags.add(1, "fr");
+        tags.add(0, lanFrom);
+        tags.add(1, lanTo);
         String[] input = new String[tags.size()];
         tags.toArray(input);
         new TranslateTask(this).execute(input);
@@ -173,4 +194,24 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         return image;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String[] lanCod = getResources().getStringArray(R.array.lan_cod_array);
+        if (parent == spinnerFrom) lanFrom = lanCod[position];
+        if (parent == spinnerTo) lanTo = lanCod[position];
+    }
+
+    public int getIndex(String[] arrayS, String el) {
+        for (int i = 0; i < arrayS.length; i++) {
+            if (arrayS[i] == el) return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        String[] lanCod = getResources().getStringArray(R.array.lan_cod_array);
+        if (parent == spinnerFrom) parent.setSelection(getIndex(lanCod, lanFrom));
+        if (parent == spinnerTo) parent.setSelection(getIndex(lanCod, lanTo));
+    }
 }

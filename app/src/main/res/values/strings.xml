@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">RTVocab</string>
+    <string-array name="languages_array">
+        <item>English</item>
+        <item>Francais</item>
+        <item>Deutsche</item>
+        <item>Italiano</item>
+        <item>Espanol</item>
+        <item>Portugues</item>
+    </string-array>
+    <string-array name="lan_cod_array">
+        <item>en</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>it</item>
+        <item>es</item>
+        <item>pt</item>
+    </string-array>
 </resources>
