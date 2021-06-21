@@ -43,20 +43,28 @@
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
-        <ImageView
-            android:id="@+id/iv_Image"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:scaleType="centerInside" />
+            android:layout_gravity="center|center_horizontal">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_getAnalysis"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="1"
-            android:scrollbars="vertical" />
+            <ImageView
+                android:id="@+id/iv_Image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:scaleType="centerInside" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_getAnalysis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_horizontal"
+
+                android:alpha="1"
+                android:scrollbars="vertical" />
+        </FrameLayout>
 
         <Space
             android:layout_width="match_parent"

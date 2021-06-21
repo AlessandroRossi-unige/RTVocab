@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -136,8 +139,14 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         // If it is the requestCode will match the LOAD_IMAGE_RESULTS value.
         // If the resultCode is RESULT_OK and there is some data we know that an image was picked.
         if (requestCode == REQUEST_IMAGE_CAPTURE && photoUri != null) {
+            Uri imageUri = photoUri;
             InputStream iStream = null;
-            iv_Image.setImageURI(photoUri);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+            Picasso.get().load(imageUri).resize(width,height).into(iv_Image);
             try {
                 iStream = getContentResolver().openInputStream(photoUri);
                 byte[] inputData = this.getBytes(iStream);

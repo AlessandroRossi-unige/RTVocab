@@ -29,7 +29,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     // get the size of the list
     @Override
     public int getItemCount() {
-        return itemList == null ? 0 : itemList.size();
+        return itemList.size();
     }
 
     public Item getItem(int pos) {
@@ -48,7 +48,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
         TextView item = holder.item;
-        item.setText(itemList.get(listPosition).getFirst() + " -> " + itemList.get(listPosition).getSecond());
+        item.setText(itemList.get(listPosition).getFirst());
     }
     public void clearData() {
         itemList.clear();

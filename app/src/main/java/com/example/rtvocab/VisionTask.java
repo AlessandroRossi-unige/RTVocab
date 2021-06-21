@@ -39,7 +39,6 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
             }
             return "OK";
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
             return "ERROR";
         }
