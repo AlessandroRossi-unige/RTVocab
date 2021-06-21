@@ -16,4 +16,6 @@
         <item>es</item>
         <item>pt</item>
     </string-array>
+    <string name="SAVE_LAN_FROM">saveLanFrom</string>
+    <string name="SAVE_LAN_TO">saveLanTo</string>
 </resources>

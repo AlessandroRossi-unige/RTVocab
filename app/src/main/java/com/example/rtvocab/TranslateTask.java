@@ -66,7 +66,7 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
         try {
             this.result = new ArrayList<Pair<String,String>>();
             JsonParser parser = new JsonParser();
-            for (int i = 2; i < 7; i++) {
+            for (int i = 2; i < text.length; i++) {
                 // API call
                 String res = Post(text[i], url);
                 // json parse
@@ -90,6 +90,8 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
         super.onPostExecute(s);
         if (s.equals("OK")) {
             delegate.onTranslateCompleted(this.result);
+        } else {
+            delegate.onTranslateCompleted(null);
         }
     }
 

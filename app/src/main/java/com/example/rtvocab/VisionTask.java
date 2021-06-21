@@ -55,8 +55,8 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
         super.onPostExecute(result);
         List<String> res = new ArrayList<String>();
         if (result.equals("OK")) {
-            for (Pair<String, Double> tag : this.tagList) {
-                res.add(tag.first);
+            for (int i = 0; i < this.tagList.size(); i++) {
+                res.add(this.tagList.get(i).first);
             }
         }
         delegate.onAnalysisCompleted(res);

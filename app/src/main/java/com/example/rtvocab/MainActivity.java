@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,14 +38,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AnalysisCompleted, AdapterView.OnItemSelectedListener {
 
-    private Button btn_getAnalysis = null;
-    private RecyclerView rv_getAnalysis = null;
-    private ImageView iv_Image = null;
-    private TextView selectedTextView = null;
-    private Spinner spinnerFrom = null;
-    private Spinner spinnerTo = null;
-    private String lanFrom = "en";
-    private String lanTo = "it";
+    private Button btn_getAnalysis;
+    private RecyclerView rv_getAnalysis;
+    private ImageView iv_Image;
+    private TextView selectedTextView;
+    private ProgressBar progressBar;
+    private Spinner spinnerFrom;
+    private Spinner spinnerTo;
+    private String lanFrom;
+    private String lanTo;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
@@ -58,6 +62,24 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
     private ItemArrayAdapter itemArrayAdapter = null;
 
+    public void loadLanPref() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String savedFrom = getString(R.string.SAVE_LAN_FROM);
+        String savedTo = getString(R.string.SAVE_LAN_TO);
+        lanFrom = sharedPreferences.getString(savedFrom, "en");
+        lanTo = sharedPreferences.getString(savedTo, "it");
+    }
+
+    public void saveLanPref(String from, String to) {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String savedFrom = getString(R.string.SAVE_LAN_FROM);
+        String savedTo = getString(R.string.SAVE_LAN_TO);
+        editor.putString(savedFrom, from);
+        editor.putString(savedTo, to);
+        editor.commit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,12 +89,15 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
         iv_Image = findViewById(R.id.iv_Image);
         selectedTextView = findViewById(R.id.selectedTextView);
+        progressBar = findViewById(R.id.progressBar);
         spinnerFrom = findViewById(R.id.spinnerFrom);
         spinnerFrom.setOnItemSelectedListener(this);
         spinnerTo = findViewById(R.id.spinnerTo);
         spinnerTo.setOnItemSelectedListener(this);
 
         selectedTextView.setText("Press Analyze to take a picture");
+
+        progressBar.setVisibility(View.INVISIBLE);
 
         // Initializing list view with the custom adapter
         itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList, this);
@@ -81,17 +106,26 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         rv_getAnalysis.setItemAnimator(new DefaultItemAnimator());
         rv_getAnalysis.setAdapter(itemArrayAdapter);
 
+        // load language preferences
+        loadLanPref();
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.languages_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerFrom.setAdapter(spinnerAdapter);
+        int posL = getIndex(getResources().getStringArray(R.array.lan_cod_array), lanFrom);
+        spinnerFrom.setSelection(posL);
+
         spinnerTo.setAdapter(spinnerAdapter);
+        posL = getIndex(getResources().getStringArray(R.array.lan_cod_array), lanTo);
+        spinnerTo.setSelection(posL);
 
         btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedTextView.setText("Press Analyze to take a picture");
+                itemArrayAdapter.clearData();
                 photoUri = null;
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Ensure that there's a camera activity to handle the intent
@@ -146,10 +180,11 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             int height = displayMetrics.heightPixels;
             int width = displayMetrics.widthPixels;
-            Picasso.get().load(imageUri).resize(width,height).into(iv_Image);
+            Picasso.get().load(imageUri).resize(width,height).centerInside().into(iv_Image);
             try {
                 iStream = getContentResolver().openInputStream(photoUri);
                 byte[] inputData = this.getBytes(iStream);
+                progressBar.setVisibility(View.VISIBLE);
                 new VisionTask(this).execute(inputData);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -172,12 +207,18 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
     @Override
     public void onTranslateCompleted(List<Pair<String,String>> results) {
-        ArrayList<Item> input = new ArrayList<>();
-        for (Pair<String,String> el:results) {
-            input.add(new Item(el.first, el.second));
+        if (results != null) {
+            ArrayList<Item> input = new ArrayList<>();
+            for (int i = 0; i < results.size(); i++) {
+                input.add(new Item(results.get(i).first, results.get(i).second));
+            }
+            itemArrayAdapter.updateData(input);
+            selectedTextView.setText("Select from the list");
+        } else {
+            itemArrayAdapter.clearData();
+            selectedTextView.setText("ERROR! Try again");
         }
-        itemArrayAdapter.updateData(input);
-        selectedTextView.setText("Select from the list");
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -212,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
     public int getIndex(String[] arrayS, String el) {
         for (int i = 0; i < arrayS.length; i++) {
-            if (arrayS[i] == el) return i;
+            if (arrayS[i].equals(el)) return i;
         }
         return -1;
     }
@@ -222,5 +263,11 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         String[] lanCod = getResources().getStringArray(R.array.lan_cod_array);
         if (parent == spinnerFrom) parent.setSelection(getIndex(lanCod, lanFrom));
         if (parent == spinnerTo) parent.setSelection(getIndex(lanCod, lanTo));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveLanPref(lanFrom, lanTo);
     }
 }
