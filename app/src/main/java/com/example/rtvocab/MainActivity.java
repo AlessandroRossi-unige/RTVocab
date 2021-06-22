@@ -25,22 +25,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,12 +54,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
     String currentPhotoPath;
     Uri photoUri = null;
 
-    private VisionTask visionTask = null;
-    private AnalysisCompleted analysisCompleted = null;
-
-    private final static int PICK_IMAGE = 1;
-
-    private List<String> tagsList;
     private ArrayList <Item> itemList = new ArrayList<Item>();
 
     private ItemArrayAdapter itemArrayAdapter = null;

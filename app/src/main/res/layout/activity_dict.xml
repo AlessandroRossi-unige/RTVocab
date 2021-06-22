@@ -6,15 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".DictActivity">
 
-    <TextView
-        android:id="@+id/tv_getDict"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="218dp"
-        tools:layout_editor_absoluteY="317dp" />
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:clickable="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
+        android:longClickable="false" />
 </androidx.constraintlayout.widget.ConstraintLayout>

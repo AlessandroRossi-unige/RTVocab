@@ -4,14 +4,18 @@
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:layout_gravity="center|center_horizontal"
+    android:focusable="auto"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/row_item"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:gravity="center"
+        android:focusable="auto"
+        android:gravity="center|start"
+        android:padding="25px"
+        android:text="TextView"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold" />

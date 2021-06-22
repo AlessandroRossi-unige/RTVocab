@@ -1,19 +1,20 @@
 package com.example.rtvocab;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 
 import java.util.Map;
 
 public class DictActivity extends Activity {
 
-    TextView tv_getDict = null;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +22,13 @@ public class DictActivity extends Activity {
         setContentView(R.layout.activity_dict);
 
         SharedPreferences sharedPref = DictActivity.this.getSharedPreferences("DICTIONARY",Context.MODE_PRIVATE);
-        String message = "";
-        Map<String, ?> allEntries = sharedPref.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            message += entry.getKey() + ": " + entry.getValue().toString() + "\n";
-        }
-        tv_getDict = findViewById(R.id.tv_getDict);
-        tv_getDict.setText(message);
 
+        Map<String, String> allEntries = (Map<String, String>) sharedPref.getAll();
+
+        ListViewAdapter adapter = new ListViewAdapter(this,allEntries);
+        listView = findViewById(R.id.listView);
+        listView.setEnabled(false);
+        listView.setAdapter(adapter);
 
     }
 }

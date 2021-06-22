@@ -19,5 +19,6 @@
     <string name="SAVE_LAN_FROM">saveLanFrom</string>
     <string name="SAVE_LAN_TO">saveLanTo</string>
     <string name="LAUNCH_ACTIVITY">com.example.rtvocab.DictActivity</string>
+    <string name="BACK_MAIN_ACTIVITY">com.example.rtvocab.MainActivity</string>
     <string name="LABEL_DATA">LABEL_DATA</string>
 </resources>
