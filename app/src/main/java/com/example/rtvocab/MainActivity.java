@@ -25,20 +25,30 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements AnalysisCompleted, AdapterView.OnItemSelectedListener {
 
     private Button btn_getAnalysis;
+    private Button btn_getDict;
     private RecyclerView rv_getAnalysis;
     private ImageView iv_Image;
     private TextView selectedTextView;
@@ -86,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         setContentView(R.layout.activity_main);
 
         btn_getAnalysis = findViewById(R.id.btn_getAnalysis);
+        btn_getDict = findViewById(R.id.btn_getDict);
         rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
         iv_Image = findViewById(R.id.iv_Image);
         selectedTextView = findViewById(R.id.selectedTextView);
@@ -121,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         posL = getIndex(getResources().getStringArray(R.array.lan_cod_array), lanTo);
         spinnerTo.setSelection(posL);
 
+
         btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +161,16 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
                     }
                 }
 
+
+            }
+        });
+
+        btn_getDict.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getString(R.string.LAUNCH_ACTIVITY));
+                startActivity(intent);
 
             }
         });
@@ -203,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         String[] input = new String[tags.size()];
         tags.toArray(input);
         new TranslateTask(this).execute(input);
+
     }
 
     @Override
@@ -222,10 +245,15 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
     }
 
     @Override
-    public void onSelectCompleted(int position) {
+    public void onSelectCompleted(int position){
         Item selected = itemArrayAdapter.getItem(position);
         itemArrayAdapter.clearData();
         selectedTextView.setText("You chose: " + selected.getFirst() + " = " + selected.getSecond());
+
+        SharedPreferences sharedPref = this.getSharedPreferences("DICTIONARY", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(selected.getFirst(), selected.getSecond());
+        editor.apply();
     }
 
     private File createImageFile() throws IOException {
@@ -270,4 +298,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         super.onPause();
         saveLanPref(lanFrom, lanTo);
     }
+
+
 }

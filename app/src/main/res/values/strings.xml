@@ -18,4 +18,6 @@
     </string-array>
     <string name="SAVE_LAN_FROM">saveLanFrom</string>
     <string name="SAVE_LAN_TO">saveLanTo</string>
+    <string name="LAUNCH_ACTIVITY">com.example.rtvocab.DictActivity</string>
+    <string name="LABEL_DATA">LABEL_DATA</string>
 </resources>
