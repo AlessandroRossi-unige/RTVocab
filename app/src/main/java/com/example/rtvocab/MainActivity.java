@@ -2,6 +2,7 @@ package com.example.rtvocab;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Pair;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,50 +34,71 @@ import com.squareup.picasso.Picasso;
 
 
 import java.io.*;
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements AnalysisCompleted, AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AnalysisCompleted {
 
     private Button btn_getAnalysis;
-    private Button btn_getDict;
     private RecyclerView rv_getAnalysis;
+    private TextView lanSelectedTextView;
     private ImageView iv_Image;
     private TextView selectedTextView;
     private ProgressBar progressBar;
-    private Spinner spinnerFrom;
-    private Spinner spinnerTo;
-    private String lanFrom;
-    private String lanTo;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
     Uri photoUri = null;
+    private LanguagesPref loadLan;
 
     private ArrayList <Item> itemList = new ArrayList<Item>();
 
     private ItemArrayAdapter itemArrayAdapter = null;
 
-    public void loadLanPref() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        String savedFrom = getString(R.string.SAVE_LAN_FROM);
-        String savedTo = getString(R.string.SAVE_LAN_TO);
-        lanFrom = sharedPreferences.getString(savedFrom, "en");
-        lanTo = sharedPreferences.getString(savedTo, "it");
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu,menu);
+        return true;
     }
 
-    public void saveLanPref(String from, String to) {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String savedFrom = getString(R.string.SAVE_LAN_FROM);
-        String savedTo = getString(R.string.SAVE_LAN_TO);
-        editor.putString(savedFrom, from);
-        editor.putString(savedTo, to);
-        editor.commit();
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.MENU_1).setVisible(false);
+        menu.findItem(R.id.MENU_2).setVisible(true);
+        menu.findItem(R.id.MENU_3).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id=item.getItemId();
+        switch(id) {
+            case R.id.MENU_2:
+                this.startActivity(new Intent(this, DictActivity.class));
+                break;
+            case R.id.MENU_3:
+                this.startActivity(new Intent(this, SetLanguagesActivity.class));
+                break;
+        }
+        return false;
+    }
+
+    // show current language preferences
+    private void displayLanSelect() {
+        ArrayList<String> lanCod = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.lan_cod_array)));
+        ArrayList<String> lanString = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.languages_array)));
+        int posFrom = lanCod.indexOf(loadLan.getLanFrom());
+        int posTo = lanCod.indexOf(loadLan.getLanTo());
+        lanSelectedTextView.setText(lanString.get(posFrom) + " -> " + lanString.get(posTo));
     }
 
     @Override
@@ -81,18 +106,19 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // set languagesPref
+        SharedPreferences sP = getSharedPreferences(getString(R.string.LAN_PREF), Context.MODE_PRIVATE);
+        loadLan = new LanguagesPref(sP, getString(R.string.SAVE_LAN_FROM), getString(R.string.SAVE_LAN_TO));
+
         btn_getAnalysis = findViewById(R.id.btn_getAnalysis);
-        btn_getDict = findViewById(R.id.btn_getDict);
         rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
+        lanSelectedTextView = findViewById(R.id.lanSelect);
         iv_Image = findViewById(R.id.iv_Image);
         selectedTextView = findViewById(R.id.selectedTextView);
         progressBar = findViewById(R.id.progressBar);
-        spinnerFrom = findViewById(R.id.spinnerFrom);
-        spinnerFrom.setOnItemSelectedListener(this);
-        spinnerTo = findViewById(R.id.spinnerTo);
-        spinnerTo.setOnItemSelectedListener(this);
 
         selectedTextView.setText("Press Analyze to take a picture");
+        displayLanSelect();
 
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -102,21 +128,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         rv_getAnalysis.setLayoutManager(new LinearLayoutManager(this));
         rv_getAnalysis.setItemAnimator(new DefaultItemAnimator());
         rv_getAnalysis.setAdapter(itemArrayAdapter);
-
-        // load language preferences
-        loadLanPref();
-
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.languages_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerFrom.setAdapter(spinnerAdapter);
-        int posL = getIndex(getResources().getStringArray(R.array.lan_cod_array), lanFrom);
-        spinnerFrom.setSelection(posL);
-
-        spinnerTo.setAdapter(spinnerAdapter);
-        posL = getIndex(getResources().getStringArray(R.array.lan_cod_array), lanTo);
-        spinnerTo.setSelection(posL);
 
 
         btn_getAnalysis.setOnClickListener(new View.OnClickListener() {
@@ -147,16 +158,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
                     }
                 }
 
-
-            }
-        });
-
-        btn_getDict.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getString(R.string.LAUNCH_ACTIVITY));
-                startActivity(intent);
 
             }
         });
@@ -205,13 +206,14 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
     @RequiresApi(api = Build.VERSION_CODES.O)
 
     @Override
-    public void onAnalysisCompleted(List<String> tags){
-        tags.add(0, lanFrom);
-        tags.add(1, lanTo);
+    public void onAnalysisCompleted(List<String> tags) {
+        // load language preferences
+        tags.add(0, loadLan.getLanFrom());
+        tags.add(1, loadLan.getLanTo());
+
         String[] input = new String[tags.size()];
         tags.toArray(input);
         new TranslateTask(this).execute(input);
-
     }
 
     @Override
@@ -256,33 +258,6 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String[] lanCod = getResources().getStringArray(R.array.lan_cod_array);
-        if (parent == spinnerFrom) lanFrom = lanCod[position];
-        if (parent == spinnerTo) lanTo = lanCod[position];
-    }
-
-    public int getIndex(String[] arrayS, String el) {
-        for (int i = 0; i < arrayS.length; i++) {
-            if (arrayS[i].equals(el)) return i;
-        }
-        return -1;
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        String[] lanCod = getResources().getStringArray(R.array.lan_cod_array);
-        if (parent == spinnerFrom) parent.setSelection(getIndex(lanCod, lanFrom));
-        if (parent == spinnerTo) parent.setSelection(getIndex(lanCod, lanTo));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveLanPref(lanFrom, lanTo);
     }
 
 
