@@ -46,7 +46,7 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null) vi = inflater.inflate(R.layout.row, null);
-        vi.setBackgroundResource(R.drawable.costum_shape);
+        vi.setBackgroundResource(R.drawable.custom_shape);
         TextView text1 = vi.findViewById(R.id.rowText1);
         TextView text2 = vi.findViewById(R.id.rowText2);
         String first = WordUtils.capitalize(dataKey.get(position));

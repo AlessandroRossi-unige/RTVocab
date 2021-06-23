@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
     private Spinner spinnerTo;
     private String lanFrom;
     private String lanTo;
+    private String dictName;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         String savedTo = getString(R.string.SAVE_LAN_TO);
         lanFrom = sharedPreferences.getString(savedFrom, "en");
         lanTo = sharedPreferences.getString(savedTo, "it");
+        dictName = lanFrom + '-' + lanTo;
+
     }
 
     public void saveLanPref(String from, String to) {
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         String savedTo = getString(R.string.SAVE_LAN_TO);
         editor.putString(savedFrom, from);
         editor.putString(savedTo, to);
-        editor.commit();
+        editor.apply();
+        dictName = from + '-' + to;
+
     }
 
     @Override
@@ -155,6 +160,12 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
             @Override
             public void onClick(View v) {
 
+
+                SharedPreferences sharedPreferences = getSharedPreferences("Dicts", MODE_PRIVATE);
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("DictName", lanFrom + '-' + lanTo);
+                editor.apply();
                 Intent intent = new Intent(getString(R.string.LAUNCH_ACTIVITY));
                 startActivity(intent);
 
@@ -236,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         itemArrayAdapter.clearData();
         selectedTextView.setText("You chose: " + selected.getFirst() + " = " + selected.getSecond());
 
-        SharedPreferences sharedPref = this.getSharedPreferences("DICTIONARY", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(dictName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(selected.getFirst(), selected.getSecond());
         editor.apply();

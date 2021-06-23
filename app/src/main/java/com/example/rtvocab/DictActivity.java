@@ -21,7 +21,9 @@ public class DictActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dict);
 
-        SharedPreferences sharedPref = DictActivity.this.getSharedPreferences("DICTIONARY",Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("Dicts",MODE_PRIVATE);
+        String dictName = sharedPreferences.getString("DictName", "null");
+        SharedPreferences sharedPref = DictActivity.this.getSharedPreferences(dictName,Context.MODE_PRIVATE);
 
         Map<String, String> allEntries = (Map<String, String>) sharedPref.getAll();
 
