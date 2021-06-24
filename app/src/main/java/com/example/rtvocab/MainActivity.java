@@ -83,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         int id=item.getItemId();
         switch(id) {
             case R.id.MENU_2:
+                SharedPreferences sharedPreferences = getSharedPreferences("Dicts", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("DictName", loadLan.getLanFrom() + '-' + loadLan.getLanTo());
+                editor.apply();
                 this.startActivity(new Intent(this, DictActivity.class));
                 break;
             case R.id.MENU_3:
@@ -238,8 +242,9 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         itemArrayAdapter.clearData();
         selectedTextView.setText("You chose: " + selected.getFirst() + " = " + selected.getSecond());
 
-        SharedPreferences sharedPref = this.getSharedPreferences("DICTIONARY", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+        String dictname = loadLan.getLanFrom() + '-' + loadLan.getLanTo();
+        SharedPreferences lanPref = this.getSharedPreferences(dictname, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = lanPref.edit();
         editor.putString(selected.getFirst(), selected.getSecond());
         editor.apply();
     }
