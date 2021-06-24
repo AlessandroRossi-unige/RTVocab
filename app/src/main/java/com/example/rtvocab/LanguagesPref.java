@@ -26,6 +26,10 @@ public class LanguagesPref {
         return lanTo;
     }
 
+    public String getDictName() {
+        return "Dict " + lanFrom + "-" + lanTo;
+    }
+
     public void saveLanPref(String from, String to) {
         this.lanFrom = from;
         this.lanTo = to;
