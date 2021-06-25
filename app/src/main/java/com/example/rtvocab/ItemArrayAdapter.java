@@ -1,12 +1,11 @@
 
 package com.example.rtvocab;
-import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     private static AnalysisCompleted delegate = null;
 
     //All methods in this adapter are required for a bare minimum recyclerview adapter
-    private int listItemLayout;
+    private final int listItemLayout;
     private ArrayList<Item> itemList;
     // Constructor of the class
     public ItemArrayAdapter(int layoutId, ArrayList<Item> itemList, AnalysisCompleted delegate) {
@@ -37,11 +36,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     }
 
     // specify the row layout file and click for each row
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(listItemLayout, parent, false);
-        ViewHolder myViewHolder = new ViewHolder(view);
-        return myViewHolder;
+        return new ViewHolder(view);
     }
 
     // load data in each row element
@@ -67,7 +66,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            item = (TextView) itemView.findViewById(R.id.row_item);
+            item = itemView.findViewById(R.id.row_item);
         }
         @Override
         public void onClick(View view) {

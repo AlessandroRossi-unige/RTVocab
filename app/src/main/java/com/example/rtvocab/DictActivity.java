@@ -1,7 +1,6 @@
 package com.example.rtvocab;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,19 +8,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Map;
 
 public class DictActivity extends AppCompatActivity {
 
-    private ListView listView;
     private LanguagesPref loadLan;
     private TextView dictSelectTextView;
     private String emptyMsg;
@@ -62,7 +60,7 @@ public class DictActivity extends AppCompatActivity {
         ArrayList<String> lanString = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.languages_array)));
         int posFrom = lanCod.indexOf(loadLan.getLanFrom());
         int posTo = lanCod.indexOf(loadLan.getLanTo());
-        dictSelectTextView.setText("Dictionary " + lanString.get(posFrom) + "/" + lanString.get(posTo));
+        dictSelectTextView.setText(lanString.get(posFrom) + "/" + lanString.get(posTo) + " dictionary");
         emptyMsg = lanString.get(posFrom) + "/" + lanString.get(posTo) + " is empty";
     }
 
@@ -72,6 +70,7 @@ public class DictActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dict);
 
         dictSelectTextView = findViewById(R.id.dictSelect);
+        dictSelectTextView.setBackgroundResource(R.drawable.dark_bg);
 
         // set languagesPref
         SharedPreferences sP = getSharedPreferences(getString(R.string.LAN_PREF), Context.MODE_PRIVATE);
@@ -85,10 +84,11 @@ public class DictActivity extends AppCompatActivity {
             allEntries.put(emptyMsg, "");
         }
 
-        ListViewAdapter adapter = new ListViewAdapter(this,allEntries);
-        listView = findViewById(R.id.listView);
+        ListViewAdapter adapter = new ListViewAdapter(allEntries);
+        RecyclerView listView = findViewById(R.id.listView);
         listView.setEnabled(false);
         listView.setAdapter(adapter);
+        listView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 }

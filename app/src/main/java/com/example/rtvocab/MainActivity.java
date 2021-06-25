@@ -2,7 +2,6 @@ package com.example.rtvocab;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,31 +21,24 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 
 import java.io.*;
-import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements AnalysisCompleted {
 
-    private Button btn_getAnalysis;
-    private RecyclerView rv_getAnalysis;
     private TextView lanSelectedTextView;
     private ImageView iv_Image;
     private TextView selectedTextView;
@@ -57,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
     Uri photoUri = null;
     private LanguagesPref loadLan;
 
-    private ArrayList <Item> itemList = new ArrayList<Item>();
+    private ArrayList <Item> itemList = new ArrayList<>();
 
     private ItemArrayAdapter itemArrayAdapter = null;
 
@@ -110,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         SharedPreferences sP = getSharedPreferences(getString(R.string.LAN_PREF), Context.MODE_PRIVATE);
         loadLan = new LanguagesPref(sP, getString(R.string.SAVE_LAN_FROM), getString(R.string.SAVE_LAN_TO));
 
-        btn_getAnalysis = findViewById(R.id.btn_getAnalysis);
-        rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
+        Button btn_getAnalysis = findViewById(R.id.btn_getAnalysis);
         lanSelectedTextView = findViewById(R.id.lanSelect);
         iv_Image = findViewById(R.id.iv_Image);
         selectedTextView = findViewById(R.id.selectedTextView);
@@ -124,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
 
         // Initializing list view with the custom adapter
         itemArrayAdapter = new ItemArrayAdapter(R.layout.list_item, itemList, this);
-        rv_getAnalysis = (RecyclerView) findViewById(R.id.rv_getAnalysis);
+        RecyclerView rv_getAnalysis = findViewById(R.id.rv_getAnalysis);
         rv_getAnalysis.setLayoutManager(new LinearLayoutManager(this));
         rv_getAnalysis.setItemAnimator(new DefaultItemAnimator());
         rv_getAnalysis.setAdapter(itemArrayAdapter);
@@ -168,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
 
-        int len = 0;
+        int len;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
         }
@@ -183,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements AnalysisCompleted
         // If the resultCode is RESULT_OK and there is some data we know that an image was picked.
         if (requestCode == REQUEST_IMAGE_CAPTURE && photoUri != null) {
             Uri imageUri = photoUri;
-            InputStream iStream = null;
+            InputStream iStream;
 
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

@@ -9,17 +9,17 @@ import java.util.List;
 
 public class VisionTask extends AsyncTask<byte[], Integer, String> {
 
-    private static String subscriptionKey = "f9779642e5364a89af2473de6a73b49d";
-    private static String endpoint = "https://unige-vision.cognitiveservices.azure.com/";
+    private static final String subscriptionKey = "f9779642e5364a89af2473de6a73b49d";
+    private static final String endpoint = "https://unige-vision.cognitiveservices.azure.com/";
     private List<Pair<String, Double>> tagList;
-    private AnalysisCompleted delegate = null;
+    private AnalysisCompleted delegate;
 
     public VisionTask(AnalysisCompleted delegate) {
         this.delegate = delegate;
     }
 
-    private static ComputerVisionClient Authenticate(String subscriptionKey, String endpoint){
-        return ComputerVisionManager.authenticate(subscriptionKey).withEndpoint(endpoint);
+    private static ComputerVisionClient Authenticate(){
+        return ComputerVisionManager.authenticate(VisionTask.subscriptionKey).withEndpoint(VisionTask.endpoint);
     }
 
     private String AnalyzeLocalImage(ComputerVisionClient compVisClient, byte[] imageByte) {
@@ -46,14 +46,14 @@ public class VisionTask extends AsyncTask<byte[], Integer, String> {
 
     @Override
     protected String doInBackground(byte[]... imageByte) {
-        ComputerVisionClient cvc = Authenticate(subscriptionKey, endpoint);
+        ComputerVisionClient cvc = Authenticate();
         return AnalyzeLocalImage(cvc, imageByte[0]);
     }
 
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        List<String> res = new ArrayList<String>();
+        List<String> res = new ArrayList<>();
         if (result.equals("OK")) {
             for (int i = 0; i < this.tagList.size(); i++) {
                 res.add(this.tagList.get(i).first);

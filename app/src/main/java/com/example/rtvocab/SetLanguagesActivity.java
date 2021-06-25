@@ -14,7 +14,6 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -90,6 +89,7 @@ public class SetLanguagesActivity extends AppCompatActivity implements AdapterVi
         spinnerTo.setAdapter(spinnerAdapter);
         posL = lanArray.indexOf(lanTo);
         spinnerTo.setSelection(posL);
+
     }
 
     @Override

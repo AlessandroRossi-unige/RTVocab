@@ -3,22 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/rowLinearL"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/light_bg"
         android:clickable="false"
         android:orientation="vertical"
         android:padding="15dp"
         android:weightSum="1"
-        tools:layout_editor_absoluteX="3dp"
-        tools:layout_editor_absoluteY="3dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/rowText1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="6dp"
             android:layout_marginBottom="0dp"
@@ -33,7 +42,7 @@
         <TextView
             android:id="@+id/rowText2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="6dp"
             android:layout_marginTop="0dp"
@@ -41,7 +50,7 @@
             android:clickable="false"
             android:gravity="start"
             android:text="TextView"
-            android:textColor="#595858"
+            android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
 

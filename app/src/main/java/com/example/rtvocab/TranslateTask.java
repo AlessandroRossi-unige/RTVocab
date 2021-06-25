@@ -40,14 +40,6 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
         return response.body().string();
     }
 
-    // This function prettifies the json response.
-    public static String prettify(String json_text) {
-        JsonParser parser = new JsonParser();
-        JsonElement json = parser.parse(json_text);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(json);
-    }
-
     @Override
     protected String doInBackground(String... text) {
         // text[0] -> user language
@@ -64,7 +56,7 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
                 .addQueryParameter("to", text[1])
                 .build();
         try {
-            this.result = new ArrayList<Pair<String,String>>();
+            this.result = new ArrayList<>();
             JsonParser parser = new JsonParser();
             for (int i = 2; i < text.length; i++) {
                 // API call
@@ -80,7 +72,6 @@ public class TranslateTask extends AsyncTask<String, Integer, String> {
             }
             return "OK";
         } catch (Exception e) {
-            System.out.println(e);
             return "ERROR";
         }
     }
